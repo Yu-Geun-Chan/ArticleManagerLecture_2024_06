@@ -12,7 +12,7 @@ public class MemberController extends Controller {
     private Scanner sc;
     private List<Member> members;
     private String cmd;
-    private Member loginMember;
+    private Member loginMember = null;
 
     private int lastMemberId = 3;
 
@@ -26,10 +26,22 @@ public class MemberController extends Controller {
 
         switch (actionMethodName) {
             case "join":
+
                 doJoin();
                 break;
             case "login":
+                if (isLogined()) {
+                    System.out.println("로그인 후 이용해주세요.");
+                    return;
+                }
                 doLogin();
+                break;
+            case "logout":
+                if (!isLogined()) {
+                    System.out.println("로그인 후 이용해주세요.");
+                    return;
+                }
+                doLogout();
                 break;
             default:
                 System.out.println("명령어 확인 (actionMethodName) 오류");
@@ -45,7 +57,13 @@ public class MemberController extends Controller {
         while (true) {
             System.out.print("로그인 아이디 : ");
             loginId = sc.nextLine().trim();
-            if (isJoinableLoginId(loginId) == false) {
+
+            if (loginId.isEmpty()) {
+                System.out.println("아이디를 입력하세요.");
+                continue;
+            }
+
+            if (!isJoinableLoginId(loginId)) {
                 System.out.println("이미 사용중이야");
                 continue;
             }
@@ -55,40 +73,49 @@ public class MemberController extends Controller {
         while (true) {
             System.out.print("비밀번호 : ");
             loginPw = sc.nextLine();
+
+            if (loginPw.isEmpty()) {
+                System.out.println("비밀번호를 입력하세요.");
+                continue;
+            }
+
             System.out.print("비밀번호 확인 : ");
             String loginPwConfirm = sc.nextLine();
 
-            if (loginPw.equals(loginPwConfirm) == false) {
+            if (!loginPw.equals(loginPwConfirm)) {
                 System.out.println("비번 다시 확인해");
                 continue;
             }
             break;
         }
+        String name = null;
+        while (true) {
+            System.out.print("이름 : ");
+            name = sc.nextLine();
 
-        System.out.print("이름 : ");
-        String name = sc.nextLine();
+            if (name.isEmpty()) {
+                System.out.println("이름을 입력해주세요");
+                continue;
+            }
 
-        Member member = new Member(id, regDate, loginId, loginPw, name);
-        members.add(member);
+            Member member = new Member(id, regDate, loginId, loginPw, name);
+            members.add(member);
 
-        System.out.println(id + "번 회원이 가입되었습니다");
-        lastMemberId++;
+            System.out.println(id + "번 회원이 가입되었습니다");
+            lastMemberId++;
+        }
     }
 
     private void doLogin() {
-        System.out.println("== 로그인 ==");
-        if (loginMember != null) {
-            System.out.println("로그아웃 후 이용해주세요.");
-            return;
-        }
-
-        String enterLoginId = null;
-        String enterLoginPw = null;
-        Member member = null;
-
         while (true) {
+            System.out.println("== 로그인 ==");
+
             System.out.print("아이디 입력 : ");
-            enterLoginId = sc.nextLine();
+            String enterLoginId = sc.nextLine();
+            System.out.print("비밀번호 입력 : ");
+            String enterLoginPw = sc.nextLine();
+
+            Member member = null;
 
             for (Member m : members) {
                 if (enterLoginId.equals(m.getLoginId())) {
@@ -101,27 +128,23 @@ public class MemberController extends Controller {
                 System.out.printf("[%s]은(는) 존재하지 않는 아이디 입니다.\n", enterLoginId);
                 continue;
             }
-            break;
-        }
-        while (true) {
-            System.out.print("비밀번호 입력 : ");
-            enterLoginPw = sc.nextLine();
 
-            for (Member m : members) {
-                if (enterLoginPw.equals(m.getLoginPw())) {
-                    member = m;
-                    break;
-                }
-            }
-
-            if (!enterLoginPw.equals(member.getLoginPw())) {
+            if (!member.getLoginPw().equals(enterLoginPw)) {
                 System.out.println("비밀번호를 확인해주세요.");
                 continue;
             }
-            loginMember = member;
-            System.out.printf("[%s]님 환영합니다.\n", member.getName());
+
+            loginedMember = member; // 누가 로그인 했는가?
+
+            System.out.printf("[%s]님 환영합니다.\n", loginedMember.getName());
             break;
         }
+    }
+
+    public void doLogout() {
+        loginedMember = null;
+
+        System.out.println("로그아웃 되었습니다.");
     }
 
     private boolean isJoinableLoginId(String loginId) {
