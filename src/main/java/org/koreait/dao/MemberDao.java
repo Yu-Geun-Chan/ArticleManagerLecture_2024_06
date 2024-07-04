@@ -12,4 +12,7 @@ public class MemberDao {
         members = new ArrayList<>();
     }
 
+    public List<Member> getMembers() {
+        return members;
+    }
 }

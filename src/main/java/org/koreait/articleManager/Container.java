@@ -1,13 +1,21 @@
 package org.koreait.articleManager;
 
+import com.sun.source.tree.MemberSelectTree;
 import org.koreait.dao.ArticleDao;
 import org.koreait.dao.MemberDao;
+import org.koreait.dto.Article;
+import org.koreait.service.ArticleService;
+import org.koreait.service.MemberService;
 
 import java.util.Scanner;
 
 public class Container {
     public static ArticleDao articleDao;
     public static MemberDao memberDao;
+
+    public static ArticleService articleService;
+    public static MemberService memberService;
+
     private static Scanner sc;
 
     static {
