@@ -8,11 +8,10 @@ import java.util.Scanner;
 
 public class App {
     public void run() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("==프로그램 시작==");
+        System.out.println("== 프로그램 시작 ==");
 
-        MemberController memberController = new MemberController(sc);
-        ArticleController articleController = new ArticleController(sc);
+        MemberController memberController = new MemberController();
+        ArticleController articleController = new ArticleController();
 
         articleController.makeTestData();
         memberController.makeTestData();
@@ -21,7 +20,7 @@ public class App {
 
         while (true) {
             System.out.print("명령어) ");
-            String cmd = sc.nextLine().trim();
+            String cmd = Container.getScanner().nextLine();
 
             if (cmd.length() == 0) {
                 System.out.println("명령어를 입력하세요");
@@ -42,6 +41,30 @@ public class App {
 
             String actionMethodName = cmdBits[1];
 
+            String forLoginCheck = controllerName + "/" + actionMethodName;
+
+            switch (forLoginCheck) {
+                case "article/write":
+                case "article/delete":
+                case "article/modify":
+                case "member/logout":
+                    if (!Controller.isLogined()) {
+                        System.out.println("로그인 후 이용하세요.");
+                        continue;
+                    }
+                    break;
+            }
+
+            switch (forLoginCheck) {
+                case "member/login":
+                case "member/join":
+                    if (Controller.isLogined()) {
+                        System.out.println("로그아웃 후 이용하세요.");
+                        continue;
+                    }
+                    break;
+            }
+
             if (controllerName.equals("article")) {
                 controller = articleController;
             } else if (controllerName.equals("member")) {
@@ -54,9 +77,6 @@ public class App {
             controller.doAction(cmd, actionMethodName);
 
         }
-        System.out.println("==프로그램 종료==");
-        sc.close();
+        System.out.println("== 프로그램 종료 ==");
     }
-
-
 }

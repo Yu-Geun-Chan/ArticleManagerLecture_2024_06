@@ -6,7 +6,6 @@ public class Article extends Dto {
     private String title;
     private String body;
 
-
     public Article(int id, String regDate, String updateDate, int memberId, String title, String body) {
         this.id = id;
         this.regDate = regDate;
@@ -14,7 +13,6 @@ public class Article extends Dto {
         this.memberId = memberId;
         this.title = title;
         this.body = body;
-
     }
 
     public String getRegDate() {
@@ -57,6 +55,14 @@ public class Article extends Dto {
         this.body = body;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getMemberId() {
         return memberId;
     }
@@ -64,6 +70,5 @@ public class Article extends Dto {
     public void setMemberId(int memberId) {
         this.memberId = memberId;
     }
-
 
 }
