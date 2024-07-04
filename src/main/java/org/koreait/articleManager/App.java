@@ -1,10 +1,8 @@
-package org.koreait;
+package org.koreait.articleManager;
 
 import org.koreait.controller.ArticleController;
 import org.koreait.controller.Controller;
 import org.koreait.controller.MemberController;
-
-import java.util.Scanner;
 
 public class App {
     public void run() {

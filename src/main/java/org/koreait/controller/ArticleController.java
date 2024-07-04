@@ -1,13 +1,12 @@
 package org.koreait.controller;
 
-import org.koreait.Container;
+import org.koreait.articleManager.Container;
 import org.koreait.dto.Member;
 import org.koreait.util.Util;
 import org.koreait.dto.Article;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class ArticleController extends Controller {
 
@@ -16,8 +15,10 @@ public class ArticleController extends Controller {
 
     private int lastArticleId = 3;
 
+    List<Member> members = Container.memberDao.members;
+
     public ArticleController() {
-        articles = new ArrayList<>();
+        articles = Container.articleDao.articles;
     }
 
     public void doAction(String cmd, String actionMethodName) {
@@ -89,15 +90,22 @@ public class ArticleController extends Controller {
             }
         }
 
-        System.out.println("  번호   /    날짜   / 제목   /   내용   ");
+        System.out.println("  번호   /    날짜   /   작성자   /  제목   /   내용   ");
         for (int i = forPrintArticles.size() - 1; i >= 0; i--) {
             Article article = forPrintArticles.get(i);
 
+            String writerName = null;
 
+            for (Member member : members) {
+                if(member.getId() == article.getId()) {
+                    writerName = member.getName();
+                    break;
+                }
+            }
             if (Util.getNow().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
-                System.out.printf("  %d   /   %s      /  %s   /   %s  \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
+                System.out.printf("  %d   /   %s      /   %s   /  %s   /   %s  \n", article.getId(), article.getRegDate().split(" ")[1], writerName, article.getTitle(), article.getBody());
             } else {
-                System.out.printf("  %d   /   %s     /  %s   /   %s  \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
+                System.out.printf("  %d   /   %s     /   %s   /   %s   /   %s  \n", article.getId(), article.getRegDate().split(" ")[0], writerName, article.getTitle(), article.getBody());
             }
 
         }
@@ -116,10 +124,12 @@ public class ArticleController extends Controller {
             return;
         }
 
+        String writerName = loginedMember.getName();
 
         System.out.println("번호 : " + foundArticle.getId());
         System.out.println("작성날짜 : " + foundArticle.getRegDate());
         System.out.println("수정날짜 : " + foundArticle.getUpdateDate());
+        System.out.println("작성자 : " + writerName);
         System.out.println("제목 : " + foundArticle.getTitle());
         System.out.println("내용 : " + foundArticle.getBody());
     }
